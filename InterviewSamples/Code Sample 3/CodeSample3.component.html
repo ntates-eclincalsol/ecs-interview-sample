@@ -1,0 +1,39 @@
+﻿<table mat-table [dataSource]="users" class="mat-elevation-z8">
+
+    <!-- Name -->
+    <ng-container matColumnDef="Name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let user">{{ user.Name }}</td>
+    </ng-container>
+
+    <!-- Email -->
+    <ng-container matColumnDef="Email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let user">{{ user.Email }}</td>
+    </ng-container>
+
+    <!-- Phone Number -->
+    <ng-container matColumnDef="PhoneNumber">
+        <th mat-header-cell *matHeaderCellDef>PhoneNumber</th>
+        <td mat-cell *matCellDef="let user">{{ user.PhoneNumber }}</td>
+    </ng-container>
+
+    <!-- Status -->
+    <ng-container matColumnDef="IsDisabled">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let user">{{ user.IsDisabled ? 'Disabled' : 'Enabled' }}</td>
+    </ng-container>
+
+    <!-- Action -->
+    <ng-container matColumnDef="Actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let user">
+            <button *ngIf="!user.IsDisabled" (click)="disableUser(user)">Disable</button>
+            <button *ngIf="user.IsDisabled" (click)="enableUser(user)">Enable</button>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
