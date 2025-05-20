@@ -10,11 +10,13 @@ namespace InterviewSamples
     {
         private readonly ISample2Manager _manager;
         private readonly ISample2Repository _repository;
+        private readonly ISample2Emailer _emailer;
 
-        public Sample2ApiController(ISample2Manager manager, ISample2Repository repository)
+        public Sample2ApiController(ISample2Manager manager, ISample2Repository repository, ISample2Emailer emailer)
         {
             _manager = manager;
             _repository = repository;
+            _emailer = emailer;
         }
 
         [HttpPost]
@@ -57,7 +59,31 @@ namespace InterviewSamples
 
             return Ok(new { Id = id });
         }
+
+        [HttpPost]
+        [Authorize]
+        [Route("sendEmail")]
+        public IHttpActionResult SendEmail([FromBody]string emailType, [FromBody] Sample2UserModel user)
+        {
+            var enumType = Enum.Parse(typeof(EmailType), emailType);
+            if(enumType == EmailType.NewUser)
+            {
+                _emailer.SendNewUserEmail(user);
+            } 
+            else if (enumType == EmailType.PasswordChanged)
+            {
+                _emailer.SendPasswordChangedEmail(user);
+            }
+            else if (enumType == EmailType.Overdue)
+            {
+                _emailer.SendOverdueEmail(user);
+            }
+
+            return Ok();
+
+        }
     }
+
 
     // Write the user class for the code above 
     public class Sample2UserModel
@@ -139,5 +165,20 @@ namespace InterviewSamples
         {
             throw new System.NotImplementedException();
         }
+    }
+
+
+    public interface ISample2Emailer
+    {
+        public void SendOverdueEmail(Sample2UserModel model);
+        public void SendNewUserEmail(Sample2UserModel model);
+        public void SendPasswordChangedEmail(Sample2UserModel model);
+    }
+
+    public enum EmailType
+    {
+        Overdue,
+        NewUser,
+        PasswordChanged
     }
 }
